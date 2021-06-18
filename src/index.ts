@@ -10,18 +10,27 @@ const ITEM_ZISE = 20;
 
 const screen = new Screen(ctx, ITEM_ZISE);
 
-let screenMap;
+const SCREEN_WIDTH = 11;
+const SCREEN_HEIGHT = 20;
+let screenMap = new Array(SCREEN_HEIGHT).fill(null).map(_ => new Array(SCREEN_WIDTH).fill(null));
 
 const generateScreenMap = () => {
-  screenMap = new Array(10)
-    .fill(null)
-    .map((_) =>
-      new Array(10).fill(null).map((_) => Math.round(Math.random() * 7))
-    );
+  console.time('create arr')
+  screenMap = screenMap.map( row => row.map( _ => Math.round( Math.random() ) ) );
 
   screen.render(screenMap);
+  console.timeEnd('create arr')
 };
 
 generateScreenMap();
 
-setInterval(generateScreenMap, 1000);
+const btn = document.getElementById('rerender')!;
+btn.addEventListener('click', () => {
+  console.time('handle');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  generateScreenMap();
+  console.timeEnd('handle');
+});
+
+// setInterval(generateScreenMap, 1000 / 24);

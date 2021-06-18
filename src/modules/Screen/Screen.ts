@@ -14,6 +14,8 @@ const defaultPalette: IPalette = {
 };
 
 export class Screen {
+  private prevScreenMap: ScreenMap | null = null;
+
   constructor(
     private ctx: CanvasRenderingContext2D,
     private unitSize: number,
@@ -25,6 +27,12 @@ export class Screen {
     this.ctx.fillStyle = color;
     this.ctx.lineWidth = 2;
 
+    this.ctx.clearRect(
+      x * this.unitSize,
+      y * this.unitSize,
+      this.unitSize,
+      this.unitSize,
+    );
     this.ctx.fillRect(
       x * this.unitSize,
       y * this.unitSize,
@@ -41,11 +49,21 @@ export class Screen {
   };
 
   render = (screenMap: ScreenMap) => {
+    console.time('render');
+    let count = 0;
     screenMap.forEach((row, rowIndex) => {
       row.forEach((col, colIndex) => {
-        const color = this.pallete[col] || this.pallete[0];
-        this.drawUnit(colIndex, rowIndex, color);
+        const prevCol = this.prevScreenMap && this.prevScreenMap[rowIndex][colIndex];
+
+        // if(col !== prevCol) {
+          const color = this.pallete[col] || this.pallete[0];
+          this.drawUnit(colIndex, rowIndex, color);
+          count += 1;
+        // }
       });
     });
+    console.log(count);
+    this.prevScreenMap = screenMap;
+    console.timeEnd('render');
   };
 }
